@@ -18,16 +18,19 @@ class MyApp extends StatelessWidget {
       title: 'Flutter APP',
       home: MainScreen(),
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black38),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
+        primaryColor: Colors.blueGrey,
       ),
     );
   }
 }
+
 class MainScreen extends StatefulWidget {
   @override
   _MainScreenState createState() => _MainScreenState();
 }
+
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   final List<Widget> _screens = [
@@ -35,46 +38,73 @@ class _MainScreenState extends State<MainScreen> {
     SecondScreen(),
     ThirdScreen(),
   ];
+
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(
-      child: _screens.elementAt(_selectedIndex),
-    ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blueGrey[900],
+        title: Text(
+          'Flutter App',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
+        ),
+        centerTitle: true,
+      ),
+      body: Row(
+        children: <Widget>[
+          NavigationRail(
+            backgroundColor: Colors.blueGrey[50],
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: _onItemTapped,
+            labelType: NavigationRailLabelType.all,
+            selectedIconTheme: IconThemeData(color: Colors.blueGrey[900]),
+            selectedLabelTextStyle: TextStyle(color: Colors.blueGrey[900]),
+            unselectedIconTheme: IconThemeData(color: Colors.blueGrey[600]),
+            unselectedLabelTextStyle: TextStyle(color: Colors.blueGrey[600]),
+            destinations: const <NavigationRailDestination>[
+              NavigationRailDestination(
+                icon: Icon(Icons.home),
+                selectedIcon: Icon(Icons.home_filled),
+                label: Text('Home'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.search),
+                selectedIcon: Icon(Icons.search_rounded),
+                label: Text('Search'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.notifications),
+                selectedIcon: Icon(Icons.notifications_active),
+                label: Text('Notifications'),
+              ),
+            ],
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
+          const VerticalDivider(thickness: 1, width: 1),
+          Expanded(
+            child: Center(
+              child: _screens.elementAt(_selectedIndex),
+            ),
           ),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        onTap: _onItemTapped,
       ),
     );
   }
 }
 
-
-    class SplashScreen extends StatelessWidget {
+class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter MAD helloworldft'),
       ),
       body: Center(
         child: ElevatedButton(
@@ -122,63 +152,6 @@ class ThirdScreen extends StatelessWidget {
           },
         ),
       ),
-    );
-  }
-}
-
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-
-        title: Text(widget.title),
-      ),
-      body: Center(
-
-        child: Column(
-
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'Has pulsado el botón varias veces:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
