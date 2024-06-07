@@ -11,15 +11,19 @@ class SplashScreen extends StatefulWidget {
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
+
 class _SplashScreenState extends State<SplashScreen> {
   final logger = Logger();
   final _uidController = TextEditingController();
   final _tokenController = TextEditingController();
+  StreamSubscription<Position>? _positionStreamSubscription;
+
   @override
   void initState() {
     super.initState();
     _loadPrefs();
   }
+
   Future<void> _loadPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     String? uid = prefs.getString('uid');
@@ -110,13 +114,15 @@ class _SplashScreenState extends State<SplashScreen> {
 
   void startTracking() async {
     final locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.high, // Adjust the accuracy as needed
-      distanceFilter: 10, // Distance in meters before an update is triggered
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 10,
     );
+
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return Future.error('Location services are disabled.');
     }
+
     var permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
@@ -124,19 +130,25 @@ class _SplashScreenState extends State<SplashScreen> {
         return Future.error('Location permissions are denied');
       }
     }
+
     if (permission == LocationPermission.deniedForever) {
       return Future.error('Location permissions are permanently denied');
     }
+
     _positionStreamSubscription = Geolocator.getPositionStream(locationSettings: locationSettings).listen(
           (Position position) {
         writePositionToFile(position);
       },
     );
   }
+
   void stopTracking() {
     _positionStreamSubscription?.cancel();
-    _positionStreamSubscription = null;
+    setState(() {
+      _positionStreamSubscription = null;
+    });
   }
+
   Future<void> writePositionToFile(Position position) async {
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/gps_coordinates.csv');
@@ -148,7 +160,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void dispose() {
     _uidController.dispose();
     _tokenController.dispose();
+    _positionStreamSubscription?.cancel();
     super.dispose();
   }
 }
-
