@@ -6,6 +6,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:logger/logger.dart';
 import 'settings_screen.dart';
+import '/db/database_helper.dart';
+
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -17,6 +19,8 @@ class _SplashScreenState extends State<SplashScreen> {
   final _uidController = TextEditingController();
   final _tokenController = TextEditingController();
   StreamSubscription<Position>? _positionStreamSubscription;
+  DatabaseHelper db = DatabaseHelper.instance;
+
 
   @override
   void initState() {
@@ -138,6 +142,12 @@ class _SplashScreenState extends State<SplashScreen> {
     _positionStreamSubscription = Geolocator.getPositionStream(locationSettings: locationSettings).listen(
           (Position position) {
         writePositionToFile(position);
+      },
+    );
+    // insert into sqflite db
+    _positionStreamSubscription = Geolocator.getPositionStream(locationSettings: locationSettings).listen(
+          (Position position) {
+        db.insertCoordinate(position);
       },
     );
   }

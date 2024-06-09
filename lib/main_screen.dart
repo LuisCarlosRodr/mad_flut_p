@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
 import 'screens/second_screen.dart';
 import 'screens/third_screen.dart';
+import 'screens/map_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +14,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter APP',
       home: MainScreen(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
@@ -35,6 +35,7 @@ class _MainScreenState extends State<MainScreen> {
     SplashScreen(),
     SecondScreen(),
     ThirdScreen(),
+    MapScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -57,42 +58,32 @@ class _MainScreenState extends State<MainScreen> {
         ),
         centerTitle: true,
       ),
-      body: Row(
-        children: <Widget>[
-          NavigationRail(
-            backgroundColor: Colors.blueGrey[50],
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: _onItemTapped,
-            labelType: NavigationRailLabelType.all,
-            selectedIconTheme: IconThemeData(color: Colors.blueGrey[900]),
-            selectedLabelTextStyle: TextStyle(color: Colors.blueGrey[900]),
-            unselectedIconTheme: IconThemeData(color: Colors.blueGrey[600]),
-            unselectedLabelTextStyle: TextStyle(color: Colors.blueGrey[600]),
-            destinations: const <NavigationRailDestination>[
-              NavigationRailDestination(
-                icon: Icon(Icons.home),
-                selectedIcon: Icon(Icons.home_filled),
-                label: Text('Home'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.search),
-                selectedIcon: Icon(Icons.search_rounded),
-                label: Text('Search'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.notifications),
-                selectedIcon: Icon(Icons.notifications_active),
-                label: Text('Notifications'),
-              ),
-            ],
+      body: Center(
+        child: _screens.elementAt(_selectedIndex),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
           ),
-          const VerticalDivider(thickness: 1, width: 1),
-          Expanded(
-            child: Center(
-              child: _screens.elementAt(_selectedIndex),
-            ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Notifications',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Map',
           ),
         ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blueGrey[900],
+        unselectedItemColor: Colors.blueGrey[600],
+        onTap: _onItemTapped,
       ),
     );
   }
