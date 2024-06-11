@@ -3,8 +3,13 @@ import 'screens/splash_screen.dart';
 import 'screens/second_screen.dart';
 import 'screens/third_screen.dart';
 import 'screens/map_screen.dart';
+import 'login_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -15,12 +20,30 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter APP',
-      home: MainScreen(),
+      home: AuthWrapper(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
         primaryColor: Colors.blueGrey,
       ),
+    );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          if (snapshot.data != null) {
+            return MainScreen(); // Usuario está logueado
+          }
+          return LoginScreen(); // Usuario no está logueado
+        }
+        return Center(child: CircularProgressIndicator()); // Esperando conexión
+      },
     );
   }
 }
