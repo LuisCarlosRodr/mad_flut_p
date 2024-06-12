@@ -1,10 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import '/db/database_helper.dart';
 
 class SecondScreen extends StatefulWidget {
+  const SecondScreen({super.key});
+
   @override
   _SecondScreenState createState() => _SecondScreenState();
 }
@@ -68,7 +69,7 @@ class _SecondScreenState extends State<SecondScreen> {
     print("build: Building the user interface.");
     return Scaffold(
       appBar: AppBar(
-        title: Text('Second screen'),
+        title: const Text('Second screen'),
       ),
       body: ListView.builder(
         itemCount: _coordinates.length + _dbCoordinates.length, // Combined count
@@ -83,8 +84,8 @@ class _SecondScreenState extends State<SecondScreen> {
             var dbIndex = index - _coordinates.length;
             var coord = _dbCoordinates[dbIndex];
             return ListTile(
-              title: Text('DB Timestamp: ${coord[0]}', style: TextStyle(color: Colors.blueGrey)),
-              subtitle: Text('Latitude: ${coord[1]}, Longitude: ${coord[2]}', style: TextStyle(color: Colors.blueGrey)),
+              title: Text('DB Timestamp: ${coord[0]}', style: const TextStyle(color: Colors.blueGrey)),
+              subtitle: Text('Latitude: ${coord[1]}, Longitude: ${coord[2]}', style: const TextStyle(color: Colors.blueGrey)),
               onTap: () => _showDeleteDialog(coord[0]), // Passing timestamp to the delete dialog
               onLongPress: () => _showUpdateDialog(coord[0], coord[1], coord[2]), // Added onLongPress
             );
@@ -99,15 +100,15 @@ class _SecondScreenState extends State<SecondScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Confirm delete ${timestamp}"),
-          content: Text("Do you want to delete this coordinate?"),
+          title: Text("Confirm delete $timestamp"),
+          content: const Text("Do you want to delete this coordinate?"),
           actions: <Widget>[
             TextButton(
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
               onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
-              child: Text("Delete"),
+              child: const Text("Delete"),
               onPressed: () async {
                 await DatabaseHelper.instance.deleteCoordinate(timestamp);
                 Navigator.of(context).pop();
@@ -127,29 +128,29 @@ class _SecondScreenState extends State<SecondScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Update coordinates for ${timestamp}"),
+          title: Text("Update coordinates for $timestamp"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextField(
                 controller: latController,
-                decoration: InputDecoration(labelText: "Latitude"),
+                decoration: const InputDecoration(labelText: "Latitude"),
               ),
               TextField(
                 controller: longController,
-                decoration: InputDecoration(labelText: "Longitude"),
+                decoration: const InputDecoration(labelText: "Longitude"),
               ),
             ],
           ),
           actions: <Widget>[
             TextButton(
-              child: Text("Cancel"),
+              child: const Text("Cancel"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text("Update"),
+              child: const Text("Update"),
               onPressed: () async {
                 Navigator.of(context).pop();
                 await DatabaseHelper.instance.updateCoordinate(timestamp, latController.text, longController.text);

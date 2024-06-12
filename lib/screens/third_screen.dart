@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ThirdScreen extends StatelessWidget {
+  const ThirdScreen({super.key});
+
 
   void _showAlertDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Alert Dialog'),
-          content: Text('This is an alert dialog.'),
+          title: const Text('Alert Dialog'),
+          content: const Text('This is an alert dialog.'),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -24,7 +26,7 @@ class ThirdScreen extends StatelessWidget {
   }
   void _showSnackBar(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('This is a SnackBar.'),
         duration: Duration(seconds: 3),
       ),
@@ -49,18 +51,18 @@ class ThirdScreen extends StatelessWidget {
         return Wrap(
           children: <Widget>[
             ListTile(
-              leading: Icon(Icons.share),
-              title: Text('Share'),
+              leading: const Icon(Icons.share),
+              title: const Text('Share'),
               onTap: () => {},
             ),
             ListTile(
-              leading: Icon(Icons.link),
-              title: Text('Get link'),
+              leading: const Icon(Icons.link),
+              title: const Text('Get link'),
               onTap: () => {},
             ),
             ListTile(
-              leading: Icon(Icons.edit),
-              title: Text('Edit name'),
+              leading: const Icon(Icons.edit),
+              title: const Text('Edit name'),
               onTap: () => {},
             ),
           ],
@@ -73,7 +75,7 @@ class ThirdScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: const Text('Home'),
       ),
       body: Center(
         child: Column(
@@ -81,19 +83,19 @@ class ThirdScreen extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               onPressed: () => _showAlertDialog(context),
-              child: Text('Show AlertDialog'),
+              child: const Text('Show AlertDialog'),
             ),
             ElevatedButton(
               onPressed: () => _showSnackBar(context),
-              child: Text('Show SnackBar'),
+              child: const Text('Show SnackBar'),
             ),
             ElevatedButton(
               onPressed: _showToast,
-              child: Text('Show Toast'),
+              child: const Text('Show Toast'),
             ),
             ElevatedButton(
               onPressed: () => _showModalBottomSheet(context),
-              child: Text('Show ModalBottomSheet'),
+              child: const Text('Show ModalBottomSheet'),
             ),
           ],
         ),

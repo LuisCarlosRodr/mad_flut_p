@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import '/db/database_helper.dart'; // Asegúrate de importar tu helper de base de datos
+// Asegúrate de importar tu helper de base de datos
 
 class MapScreen extends StatefulWidget {
+  const MapScreen({super.key});
+
   @override
   _MapScreenState createState() => _MapScreenState();
 }
@@ -151,7 +153,7 @@ class _MapScreenState extends State<MapScreen> {
           point: userLocation!,
           width: 80,
           height: 80,
-          child: Icon(
+          child: const Icon(
             Icons.person_pin_circle,
             size: 60,
             color: Colors.blueAccent,
@@ -170,7 +172,7 @@ class _MapScreenState extends State<MapScreen> {
           title: Text(name),
           actions: <Widget>[
             TextButton(
-              child: Text("Cerrar"),
+              child: const Text("Cerrar"),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -182,7 +184,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Map View')),
+      appBar: AppBar(title: const Text('Map View')),
       body: Stack(
         children: [
           content(),
@@ -198,10 +200,10 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget content() {
     return FlutterMap(
-      options: MapOptions(
+      options: const MapOptions(
         initialCenter: LatLng(40.416775, -3.703790), // Centro inicial en Madrid
         initialZoom: 15,
-        interactionOptions: const InteractionOptions(flags: InteractiveFlag.all),
+        interactionOptions: InteractionOptions(flags: InteractiveFlag.all),
       ),
       children: [
         openStreetMapTileLayer,
@@ -212,9 +214,9 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget legend() {
     return Container(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       color: Colors.white.withOpacity(0.8),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Leyenda:', style: TextStyle(fontWeight: FontWeight.bold)),

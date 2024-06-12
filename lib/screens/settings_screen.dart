@@ -4,6 +4,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '/login_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
   @override
   _SettingsScreenState createState() => _SettingsScreenState();
 }
@@ -31,7 +33,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Settings"),
+        title: const Text("Settings"),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _fetchAllPreferences(),
@@ -46,7 +48,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   child: ListView(
                     children: snapshot.data!.entries.map((entry) {
                       return ListTile(
-                        title: Text("${entry.key}"),
+                        title: Text(entry.key),
                         subtitle: TextField(
                           controller: controllers[entry.key],
                           decoration: InputDecoration(hintText: "Enter ${entry.key}"),
@@ -62,12 +64,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   onPressed: () {
                     _showLogoutConfirmationDialog();
                   },
-                  child: Text('Logout'),
+                  child: const Text('Logout'),
                 ),
               ],
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -81,8 +83,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Logout'),
-          content: SingleChildScrollView(
+          title: const Text('Confirm Logout'),
+          content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Text('Are you sure you want to logout?'),
@@ -91,13 +93,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop(); // Cierra el diálogo
               },
             ),
             TextButton(
-              child: Text('Logout'),
+              child: const Text('Logout'),
               onPressed: () {
                 _signOut(); // Realiza el logout
               },
@@ -114,7 +116,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     // Redirige a la pantalla de login
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
   }
 }

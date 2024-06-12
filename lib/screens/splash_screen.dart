@@ -10,6 +10,8 @@ import '/db/database_helper.dart';
 
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
@@ -45,24 +47,24 @@ class _SplashScreenState extends State<SplashScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Enter UID and Token'),
+          title: const Text('Enter UID and Token'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 TextField(
                   controller: _uidController,
-                  decoration: InputDecoration(hintText: "UID"),
+                  decoration: const InputDecoration(hintText: "UID"),
                 ),
                 TextField(
                   controller: _tokenController,
-                  decoration: InputDecoration(hintText: "Token"),
+                  decoration: const InputDecoration(hintText: "Token"),
                 ),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Save'),
+              child: const Text('Save'),
               onPressed: () async {
                 final prefs = await SharedPreferences.getInstance();
                 await prefs.setString('uid', _uidController.text);
@@ -80,14 +82,14 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Flutter App"),
+        title: const Text("Flutter App"),
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SettingsScreen()),
+                MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
             },
           ),
@@ -97,7 +99,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Welcome to the Home Screen!'),
+            const Text('Welcome to the Home Screen!'),
             Switch(
               value: _positionStreamSubscription != null,
               onChanged: (value) {
@@ -117,7 +119,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void startTracking() async {
-    final locationSettings = LocationSettings(
+    const locationSettings = LocationSettings(
       accuracy: LocationAccuracy.high,
       distanceFilter: 10,
     );
@@ -163,7 +165,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/gps_coordinates.csv');
     String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
-    await file.writeAsString('${timestamp};${position.latitude};${position.longitude}\n', mode: FileMode.append);
+    await file.writeAsString('$timestamp;${position.latitude};${position.longitude}\n', mode: FileMode.append);
   }
 
   @override

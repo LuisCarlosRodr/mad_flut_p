@@ -10,8 +10,9 @@ dependencies:
   shared_preferences: ^2.2.2
   flutter:
     sdk: flutter
-  firebase_core: ^2.3.0
-  firebase_auth: ^4.0.0
+  firebase_core: ^2.30.1
+  firebase_auth: ^4.19.4
+  firebase_database: ^10.5.4
   geolocator: ^11.0.0
   flutter_map: ^6.1.0
   latlong2: ^0.9.0
@@ -23,6 +24,7 @@ dependencies:
   cupertino_icons: ^1.0.6
 
 
+  path: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

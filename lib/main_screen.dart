@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter APP',
-      home: AuthWrapper(),
+      home: const AuthWrapper(),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
@@ -31,6 +31,8 @@ class MyApp extends StatelessWidget {
 }
 
 class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
@@ -38,17 +40,19 @@ class AuthWrapper extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.data != null) {
-            return MainScreen(); // Usuario está logueado
+            return const MainScreen(); // Usuario está logueado
           }
-          return LoginScreen(); // Usuario no está logueado
+          return const LoginScreen(); // Usuario no está logueado
         }
-        return Center(child: CircularProgressIndicator()); // Esperando conexión
+        return const Center(child: CircularProgressIndicator()); // Esperando conexión
       },
     );
   }
 }
 
 class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
+
   @override
   _MainScreenState createState() => _MainScreenState();
 }
@@ -56,10 +60,10 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
   final List<Widget> _screens = [
-    SplashScreen(),
-    SecondScreen(),
-    ThirdScreen(),
-    MapScreen(),
+    const SplashScreen(),
+    const SecondScreen(),
+    const ThirdScreen(),
+    const MapScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -73,7 +77,7 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueGrey[900],
-        title: Text(
+        title: const Text(
           'Flutter App',
           style: TextStyle(
             color: Colors.white,
