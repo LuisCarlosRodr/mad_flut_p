@@ -24,7 +24,8 @@ if (flutterVersionName == null) {
 
 android {
     namespace "com.example.mad_flut_p"
-    compileSdk flutter.compileSdkVersion
+    compileSdk 34  // Actualizado a la versión más reciente
+
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -34,6 +35,8 @@ android {
 
     kotlinOptions {
         jvmTarget = '1.8'
+        apiVersion = '1.9'
+        languageVersion = '1.9'
     }
 
     sourceSets {
@@ -42,8 +45,8 @@ android {
 
     defaultConfig {
         applicationId "com.example.mad_flut_p"
-        minSdkVersion 23 // Actualizado a 23
-        targetSdkVersion flutter.targetSdkVersion
+        minSdkVersion 23
+        targetSdkVersion 34  // Actualizado a la versión más reciente
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
     }
@@ -59,6 +62,12 @@ flutter {
     source '../..'
 }
 
-dependencies {}
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+}
 
 apply plugin: 'com.google.gms.google-services'
