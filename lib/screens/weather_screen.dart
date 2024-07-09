@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import '../weather_model.dart';
 
 class WeatherScreen extends StatefulWidget {
   final String latitude;
@@ -14,7 +15,6 @@ class WeatherScreen extends StatefulWidget {
 }
 
 class _WeatherScreenState extends State<WeatherScreen> {
-  late Map<String, dynamic> weatherData = {};
   late String apiKey = '47c927d9973d9b88170d2e440b1ebaa4';
 
   @override
@@ -25,15 +25,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
   Future<void> fetchWeatherData() async {
     try {
-      print('Fetching weather data for coordinates: ${widget.latitude}, ${widget.longitude}');
       final response = await http.get(
-          Uri.parse('https://api.openweathermap.org/data/2.5/find?lat=${widget.latitude}&lon=${widget.longitude}&cnt=1&APPID=$apiKey')
+        Uri.parse(
+          'https://api.openweathermap.org/data/2.5/find?lat=${widget.latitude}&lon=${widget.longitude}&cnt=1&APPID=$apiKey',
+        ),
       );
       if (response.statusCode == 200) {
-        print('Weather API response: ${response.body}');
-        setState(() {
-          weatherData = json.decode(response.body);
-        });
+        final weatherData = json.decode(response.body);
+        Provider.of<WeatherModel>(context, listen: false).setWeatherData(weatherData);
       } else {
         throw Exception('Failed to load weather data: ${response.statusCode}');
       }
@@ -44,11 +43,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Verifica si weatherData contiene datos antes de acceder a ellos
+    final weatherData = Provider.of<WeatherModel>(context).weatherData;
+
     if (weatherData.isNotEmpty && weatherData['list'] != null && weatherData['list'].isNotEmpty) {
       String iconCode = weatherData['list'][0]['weather'][0]['icon'];
-      String iconUrl = 'https://openweathermap.org/img/wn/$iconCode.png'; // Cambio de http a https y nueva ruta
-
+      String iconUrl = 'http://openweathermap.org/img/wn/$iconCode.png';
       return Scaffold(
         appBar: AppBar(
           title: Text('Weather Information'),
@@ -63,11 +62,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
               ),
               SizedBox(height: 8.0),
               Container(
-                width: 200, // Ancho deseado del icono
-                height: 200, // Alto deseado del icono
+                width: 200,
+                height: 200,
                 child: Image.network(
                   iconUrl,
-                  fit: BoxFit.cover, // Ajustar la imagen para que cubra todo el contenedor
+                  fit: BoxFit.cover,
                 ),
               ),
               SizedBox(height: 8.0),
@@ -110,7 +109,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
         ),
       );
     } else {
-      // Muestra un indicador de carga si no hay datos disponibles
       return Scaffold(
         appBar: AppBar(
           title: Text('Weather Information'),

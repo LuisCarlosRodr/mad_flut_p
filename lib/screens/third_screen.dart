@@ -4,22 +4,30 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 class ThirdScreen extends StatefulWidget {
-  const ThirdScreen({super.key});
+  const ThirdScreen({Key? key}) : super(key: key);
 
   @override
   _ThirdScreenState createState() => _ThirdScreenState();
 }
 
 class _ThirdScreenState extends State<ThirdScreen> {
-  final TextEditingController _commentController = TextEditingController(); // Form to insert data
+  final TextEditingController _commentController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   int _moodRating = 0;
+  late DatabaseReference feedbackRef;
+
+  @override
+  void initState() {
+    super.initState();
+    feedbackRef = FirebaseDatabase.instance.reference().child('feedback');
+  }
 
   @override
   Widget build(BuildContext context) {
     User? user = _auth.currentUser;
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Third Screen'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -41,7 +49,6 @@ class _ThirdScreenState extends State<ThirdScreen> {
                       setState(() {
                         _moodRating = i;
                       });
-                      _submitFeedback(context, user);
                     },
                     child: Text(
                       _getMoodEmoji(i),
@@ -59,101 +66,42 @@ class _ThirdScreenState extends State<ThirdScreen> {
               child: const Text('Submit Feedback'),
             ),
             const SizedBox(height: 16.0),
-            StreamBuilder(
-              stream: FirebaseDatabase.instance.reference().child('feedback').onValue,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  List<Widget> commentWidgets = [];
-                  Map<dynamic, dynamic>? data = snapshot.data!.snapshot.value as Map<dynamic, dynamic>?;
-                  if (data != null) {
+            Expanded(
+              child: StreamBuilder(
+                stream: feedbackRef.onValue,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const CircularProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
+                    List<Widget> commentWidgets = [];
+                    Map<dynamic, dynamic> data = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
                     data.forEach((key, value) {
                       commentWidgets.add(
-                        LongPressDraggable(
-                          data: key, // Utilizamos la clave como datos que se pasan al soltar
-                          feedback: ListTile( // Widget que se muestra mientras se está arrastrando
+                        GestureDetector(
+                          onTap: () {
+                            _showUpdateDialog(context, key, value['comment'], value['moodRating']);
+                          },
+                          onLongPress: () {
+                            _showDeleteDialog(context, key, value);
+                          },
+                          child: ListTile(
                             title: Text(value['comment']),
-                          ),
-                          child: GestureDetector(
-                            onTap: () {
-                              _showUpdateDialog(
-                                context,
-                                key,
-                                value['comment'],
-                                value['moodRating'],
-                              );
-                            },
-                            onLongPress: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('Delete Feedback'),
-                                    content: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text('Timestamp: ${DateTime.fromMillisecondsSinceEpoch(value['timestamp'])}'),
-                                        Text('Comment: ${value['comment']}'),
-                                        Text('Mood Rating: ${value['moodRating']}'),
-                                        const SizedBox(height: 16),
-                                        const Text('Are you sure you want to delete this feedback?'),
-                                      ],
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          // Delete feedback from Firebase
-                                          DatabaseReference feedbackRef = FirebaseDatabase.instance.reference().child('feedback').child(key);
-                                          feedbackRef.remove().then((_) {
-                                            Fluttertoast.showToast(
-                                              msg: "Feedback deleted successfully.",
-                                              toastLength: Toast.LENGTH_SHORT,
-                                              gravity: ToastGravity.BOTTOM,
-                                            );
-                                            Navigator.of(context).pop();
-                                          }).catchError((error) {
-                                            print("Failed to delete feedback: $error");
-                                            Fluttertoast.showToast(
-                                              msg: "Failed to delete feedback.",
-                                              toastLength: Toast.LENGTH_SHORT,
-                                              gravity: ToastGravity.BOTTOM,
-                                            );
-                                          });
-                                        },
-                                        child: const Text('Delete'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            child: ListTile(
-                              title: Text(value['comment']),
-                              subtitle: Text('Mood Rating: ${value['moodRating']}'),
-                              leading: Text('${DateTime.fromMillisecondsSinceEpoch(value['timestamp'])}'),
-                            ),
+                            subtitle: Text('Mood Rating: ${value['moodRating']}'),
+                            leading: Text('${DateTime.fromMillisecondsSinceEpoch(value['timestamp'])}'),
                           ),
                         ),
                       );
                     });
-                  }
-                  return Expanded(
-                    child: ListView(
+                    return ListView(
                       children: commentWidgets,
-                    ),
-                  );
-                }
-              },
+                    );
+                  } else {
+                    return const Text('No feedback available.');
+                  }
+                },
+              ),
             ),
           ],
         ),
@@ -161,7 +109,6 @@ class _ThirdScreenState extends State<ThirdScreen> {
     );
   }
 
-  // Update alertDialog
   void _showUpdateDialog(BuildContext context, String key, String currentComment, int currentRating) {
     TextEditingController commentController = TextEditingController(text: currentComment);
     int rating = currentRating;
@@ -210,9 +157,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
             ),
             TextButton(
               onPressed: () {
-                // Update feedback in database
-                DatabaseReference feedbackRef = FirebaseDatabase.instance.reference().child('feedback').child(key);
-                feedbackRef.update({
+                feedbackRef.child(key).update({
                   'comment': commentController.text,
                   'moodRating': rating,
                 }).then((_) {
@@ -239,7 +184,56 @@ class _ThirdScreenState extends State<ThirdScreen> {
     );
   }
 
-  // Insert function in firebase
+  void _showDeleteDialog(BuildContext context, String key, dynamic value) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete Feedback'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Timestamp: ${DateTime.fromMillisecondsSinceEpoch(value['timestamp'])}'),
+              Text('Comment: ${value['comment']}'),
+              Text('Mood Rating: ${value['moodRating']}'),
+              const SizedBox(height: 16),
+              const Text('Are you sure you want to delete this feedback?'),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                feedbackRef.child(key).remove().then((_) {
+                  Fluttertoast.showToast(
+                    msg: "Feedback deleted successfully.",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                  );
+                  Navigator.of(context).pop();
+                }).catchError((error) {
+                  print("Failed to delete feedback: $error");
+                  Fluttertoast.showToast(
+                    msg: "Failed to delete feedback.",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                  );
+                });
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _submitFeedback(BuildContext context, User? user) {
     String comment = _commentController.text;
     if (comment.isEmpty || _moodRating == 0) {
@@ -250,18 +244,22 @@ class _ThirdScreenState extends State<ThirdScreen> {
       );
       return;
     }
-    DatabaseReference feedbackRef = FirebaseDatabase.instance.reference().child('feedback');
+
     feedbackRef.push().set({
       'uid': user?.uid,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'comment': comment,
       'moodRating': _moodRating,
-    }).then((value) {
+    }).then((_) {
       Fluttertoast.showToast(
         msg: "Feedback submitted successfully.",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
       );
+      _commentController.clear();
+      setState(() {
+        _moodRating = 0;
+      });
     }).catchError((error) {
       print("Failed to submit feedback: $error");
       Fluttertoast.showToast(
@@ -287,74 +285,5 @@ class _ThirdScreenState extends State<ThirdScreen> {
       default:
         return '';
     }
-  }
-
-  // Original methods from StatelessWidget (unchanged)
-  void _showAlertDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Alert Dialog'),
-          content: const Text('This is an alert dialog.'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showSnackBar(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('This is a SnackBar.'),
-        duration: Duration(seconds: 3),
-      ),
-    );
-  }
-
-  void _showToast() {
-    Fluttertoast.showToast(
-      msg: "This is a Toast.",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.blue,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
-  }
-
-  void _showModalBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return Wrap(
-          children: <Widget>[
-            ListTile(
-              leading: const Icon(Icons.share),
-              title: const Text('Share'),
-              onTap: () => {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.link),
-              title: const Text('Get link'),
-              onTap: () => {},
-            ),
-            ListTile(
-              leading: const Icon(Icons.edit),
-              title: const Text('Edit name'),
-              onTap: () => {},
-            ),
-          ],
-        );
-      },
-    );
   }
 }
