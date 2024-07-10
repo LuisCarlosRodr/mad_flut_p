@@ -48,63 +48,84 @@ class _WeatherScreenState extends State<WeatherScreen> {
     if (weatherData.isNotEmpty && weatherData['list'] != null && weatherData['list'].isNotEmpty) {
       String iconCode = weatherData['list'][0]['weather'][0]['icon'];
       String iconUrl = 'http://openweathermap.org/img/wn/$iconCode.png';
+
       return Scaffold(
         appBar: AppBar(
           title: Text('Weather Information'),
+          backgroundColor: Colors.blueGrey[900],
         ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                '${weatherData['list'][0]['name']}',
-                style: TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blueGrey[900]!, Colors.blueGrey[600]!],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          padding: EdgeInsets.all(16.0),
+          child: Center(
+            child: Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
               ),
-              SizedBox(height: 8.0),
-              Container(
-                width: 200,
-                height: 200,
-                child: Image.network(
-                  iconUrl,
-                  fit: BoxFit.cover,
+              elevation: 8,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      '${weatherData['list'][0]['name']}, ${weatherData['list'][0]['sys']['country']}',
+                      style: TextStyle(
+                        fontSize: 28.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueGrey[900],
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 16.0),
+                    Image.network(
+                      iconUrl,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                    SizedBox(height: 16.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        _buildWeatherInfo(
+                          'Feels Like',
+                          '${(weatherData['list'][0]['main']['feels_like'] - 273.15).toStringAsFixed(1)}°C',
+                        ),
+                        _buildWeatherInfo(
+                          'Temperature',
+                          '${(weatherData['list'][0]['main']['temp'] - 273.15).toStringAsFixed(1)}°C',
+                        ),
+                        _buildWeatherInfo(
+                          'Humidity',
+                          '${weatherData['list'][0]['main']['humidity']}%',
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16.0),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        _buildWeatherInfo(
+                          'Description',
+                          '${weatherData['list'][0]['weather'][0]['description']}',
+                        ),
+                        _buildWeatherInfo(
+                          'Wind Speed',
+                          '${weatherData['list'][0]['wind']['speed']} m/s',
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(height: 8.0),
-              Text(
-                'Country: ${weatherData['list'][0]['sys']['country']}',
-                style: TextStyle(fontSize: 18.0),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                'Coordinates: ${widget.latitude}, ${widget.longitude}',
-                style: TextStyle(fontSize: 18.0),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                'Feels Like: ${(weatherData['list'][0]['main']['feels_like'] - 273.15).toStringAsFixed(1)}°C',
-                style: TextStyle(fontSize: 18.0),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                'Description: ${weatherData['list'][0]['weather'][0]['description']}',
-                style: TextStyle(fontSize: 18.0),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                'Temperature: ${(weatherData['list'][0]['main']['temp'] - 273.15).toStringAsFixed(1)}°C',
-                style: TextStyle(fontSize: 18.0),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                'Humidity: ${weatherData['list'][0]['main']['humidity']}%',
-                style: TextStyle(fontSize: 18.0),
-              ),
-              SizedBox(height: 8.0),
-              Text(
-                'Wind Speed: ${weatherData['list'][0]['wind']['speed']} m/s',
-                style: TextStyle(fontSize: 18.0),
-              ),
-            ],
+            ),
           ),
         ),
       );
@@ -112,11 +133,46 @@ class _WeatherScreenState extends State<WeatherScreen> {
       return Scaffold(
         appBar: AppBar(
           title: Text('Weather Information'),
+          backgroundColor: Colors.blueGrey[900],
         ),
-        body: Center(
-          child: CircularProgressIndicator(),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blueGrey[900]!, Colors.blueGrey[600]!],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: Center(
+            child: CircularProgressIndicator(
+              color: Colors.white,
+            ),
+          ),
         ),
       );
     }
+  }
+
+  Widget _buildWeatherInfo(String title, String value) {
+    return Column(
+      children: <Widget>[
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.blueGrey[800],
+          ),
+        ),
+        SizedBox(height: 8.0),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 18.0,
+            color: Colors.blueGrey[800],
+          ),
+        ),
+      ],
+    );
   }
 }

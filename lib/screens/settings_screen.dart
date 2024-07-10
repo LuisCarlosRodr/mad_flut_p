@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '/login_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -34,6 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Settings"),
+        backgroundColor: Colors.blueGrey,
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _fetchAllPreferences(),
@@ -42,31 +44,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
             if (snapshot.hasError) {
               return Center(child: Text("Error: ${snapshot.error}"));
             }
-            return Column(
-              children: [
-                Expanded(
-                  child: ListView(
-                    children: snapshot.data!.entries.map((entry) {
-                      return ListTile(
-                        title: Text(entry.key),
-                        subtitle: TextField(
-                          controller: controllers[entry.key],
-                          decoration: InputDecoration(hintText: "Enter ${entry.key}"),
-                          onSubmitted: (value) {
-                            _updatePreference(entry.key, value);
-                          },
-                        ),
-                      );
-                    }).toList(),
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView(
+                      children: snapshot.data!.entries.map((entry) {
+                        return Card(
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: ListTile(
+                            title: Text(entry.key,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.blueGrey)),
+                            subtitle: TextField(
+                              controller: controllers[entry.key],
+                              decoration: InputDecoration(
+                                hintText: "Enter ${entry.key}",
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  borderSide: BorderSide.none,
+                                ),
+                                filled: true,
+                                fillColor: Colors.grey[200],
+                              ),
+                              onSubmitted: (value) {
+                                _updatePreference(entry.key, value);
+                              },
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    _showLogoutConfirmationDialog();
-                  },
-                  child: const Text('Logout'),
-                ),
-              ],
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _showLogoutConfirmationDialog,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 50, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        backgroundColor: Colors.blue[900],
+                      ),
+                      child: const Text(
+                        'Logout',
+                        style: TextStyle(fontSize: 18.0, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
           } else {
             return const Center(child: CircularProgressIndicator());
@@ -76,7 +107,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // Función para mostrar el diálogo de confirmación de logout
   Future<void> _showLogoutConfirmationDialog() async {
     return showDialog<void>(
       context: context,
@@ -95,14 +125,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             TextButton(
               child: const Text('Cancel'),
               onPressed: () {
-                Navigator.of(context).pop(); // Cierra el diálogo
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: const Text('Logout'),
-              onPressed: () {
-                _signOut(); // Realiza el logout
-              },
+              onPressed: _signOut,
             ),
           ],
         );
@@ -110,10 +138,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
-  // Función para hacer logout
   Future<void> _signOut() async {
-    await FirebaseAuth.instance.signOut(); // Hace logout
-    // Redirige a la pantalla de login
+    await FirebaseAuth.instance.signOut();
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),

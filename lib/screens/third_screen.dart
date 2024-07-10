@@ -27,7 +27,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
     User? user = _auth.currentUser;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Third Screen'),
+        title: const Text('Feedback'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -36,10 +36,23 @@ class _ThirdScreenState extends State<ThirdScreen> {
           children: <Widget>[
             TextFormField(
               controller: _commentController,
-              decoration: const InputDecoration(labelText: 'Comment'),
+              decoration: InputDecoration(
+                labelText: 'Comment',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              maxLines: 3,
             ),
             const SizedBox(height: 16.0),
-            const Text('Mood Rating:'),
+            const Text(
+              'Mood Rating:',
+              style: TextStyle(
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
@@ -53,7 +66,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
                     child: Text(
                       _getMoodEmoji(i),
                       style: TextStyle(
-                        fontSize: 24.0,
+                        fontSize: 32.0,
                         color: _moodRating == i ? Colors.amber : Colors.grey,
                       ),
                     ),
@@ -63,6 +76,13 @@ class _ThirdScreenState extends State<ThirdScreen> {
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () => _submitFeedback(context, user),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                textStyle: const TextStyle(fontSize: 16.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
               child: const Text('Submit Feedback'),
             ),
             const SizedBox(height: 16.0),
@@ -71,9 +91,9 @@ class _ThirdScreenState extends State<ThirdScreen> {
                 stream: feedbackRef.onValue,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const CircularProgressIndicator();
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
+                    return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (snapshot.hasData && snapshot.data!.snapshot.value != null) {
                     List<Widget> commentWidgets = [];
                     Map<dynamic, dynamic> data = snapshot.data!.snapshot.value as Map<dynamic, dynamic>;
@@ -86,10 +106,17 @@ class _ThirdScreenState extends State<ThirdScreen> {
                           onLongPress: () {
                             _showDeleteDialog(context, key, value);
                           },
-                          child: ListTile(
-                            title: Text(value['comment']),
-                            subtitle: Text('Mood Rating: ${value['moodRating']}'),
-                            leading: Text('${DateTime.fromMillisecondsSinceEpoch(value['timestamp'])}'),
+                          child: Card(
+                            elevation: 2.0,
+                            margin: const EdgeInsets.symmetric(vertical: 8.0),
+                            child: ListTile(
+                              title: Text(value['comment']),
+                              subtitle: Text('Mood Rating: ${value['moodRating']}'),
+                              leading: Text(
+                                '${DateTime.fromMillisecondsSinceEpoch(value['timestamp'])}',
+                                style: const TextStyle(fontSize: 12.0),
+                              ),
+                            ),
                           ),
                         ),
                       );
@@ -98,7 +125,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
                       children: commentWidgets,
                     );
                   } else {
-                    return const Text('No feedback available.');
+                    return const Center(child: Text('No feedback available.'));
                   }
                 },
               ),
@@ -122,10 +149,14 @@ class _ThirdScreenState extends State<ThirdScreen> {
             children: <Widget>[
               TextField(
                 controller: commentController,
-                decoration: const InputDecoration(labelText: "Comment"),
+                decoration: const InputDecoration(
+                  labelText: "Comment",
+                  border: OutlineInputBorder(),
+                ),
               ),
               const SizedBox(height: 16.0),
               const Text('Mood Rating:'),
+              const SizedBox(height: 8.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -139,7 +170,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
                       child: Text(
                         _getMoodEmoji(i),
                         style: TextStyle(
-                          fontSize: 24.0,
+                          fontSize: 32.0,
                           color: rating == i ? Colors.amber : Colors.grey,
                         ),
                       ),

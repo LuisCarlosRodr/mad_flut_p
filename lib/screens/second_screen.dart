@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:mad_flut_p/screens/weather_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import '/db/database_helper.dart';
 
@@ -36,12 +37,12 @@ class _SecondScreenState extends State<SecondScreen> {
   }
 
   Future<void> _loadDbCoordinates() async {
-    List<Map<String, dynamic>> dbCoords = await DatabaseHelper.instance.getCoordinates(); // Corrected
+    List<Map<String, dynamic>> dbCoords = await DatabaseHelper.instance.getCoordinates();
     setState(() {
       _dbCoordinates = dbCoords.map((c) => [
-        c['timestamp'].toString(), // Corrected
-        c['latitude'].toString(), // Corrected
-        c['longitude'].toString() // Corrected
+        c['timestamp'].toString(),
+        c['latitude'].toString(),
+        c['longitude'].toString()
       ]).toList();
     });
   }
@@ -69,28 +70,66 @@ class _SecondScreenState extends State<SecondScreen> {
     print("build: Building the user interface.");
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Second screen'),
+        title: const Text('Coordinates Information'),
+        backgroundColor: Colors.blueGrey,
       ),
-      body: ListView.builder(
-        itemCount: _coordinates.length + _dbCoordinates.length, // Combined count
-        itemBuilder: (context, index) {
-          if (index < _coordinates.length) {
-            var coord = _coordinates[index];
-            return ListTile(
-              title: Text('CSV Timestamp: ${coord[0]}'),
-              subtitle: Text('Latitude: ${coord[1]}, Longitude: ${coord[2]}'),
-            );
-          } else {
-            var dbIndex = index - _coordinates.length;
-            var coord = _dbCoordinates[dbIndex];
-            return ListTile(
-              title: Text('DB Timestamp: ${coord[0]}', style: const TextStyle(color: Colors.blueGrey)),
-              subtitle: Text('Latitude: ${coord[1]}, Longitude: ${coord[2]}', style: const TextStyle(color: Colors.blueGrey)),
-              onTap: () => _showDeleteDialog(coord[0]), // Passing timestamp to the delete dialog
-              onLongPress: () => _showUpdateDialog(coord[0], coord[1], coord[2]), // Added onLongPress
-            );
-          }
-        },
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.builder(
+          itemCount: _coordinates.length + _dbCoordinates.length,
+          itemBuilder: (context, index) {
+            if (index < _coordinates.length) {
+              var coord = _coordinates[index];
+              return _buildCard(
+                title: 'CSV Timestamp: ${coord[0]}',
+                subtitle: 'Latitude: ${coord[1]}, Longitude: ${coord[2]}',
+                icon: Icons.location_on,
+                color: Colors.lightBlue[100]!,
+              );
+            } else {
+              var dbIndex = index - _coordinates.length;
+              var coord = _dbCoordinates[dbIndex];
+              return _buildCard(
+                title: 'DB Timestamp: ${coord[0]}',
+                subtitle: 'Latitude: ${coord[1]}, Longitude: ${coord[2]}',
+                icon: Icons.storage,
+                color: Colors.lightGreen[100]!,
+                onTap: () => _showDeleteDialog(coord[0]),
+                onLongPress: () => _showUpdateDialog(coord[0], coord[1], coord[2]),
+              );
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCard({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    void Function()? onTap,
+    void Function()? onLongPress,
+  }) {
+    return Card(
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(vertical: 8.0),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: color,
+          child: Icon(icon, color: Colors.white),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blueGrey[900]),
+        ),
+        subtitle: Text(
+          subtitle,
+          style: TextStyle(color: Colors.blueGrey[700]),
+        ),
+        onTap: onTap,
+        onLongPress: onLongPress,
       ),
     );
   }
@@ -100,56 +139,128 @@ class _SecondScreenState extends State<SecondScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Confirm delete $timestamp"),
-          content: const Text("Do you want to delete this coordinate?"),
+          title: Text(
+            "Confirm Delete",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.blueGrey[800],
+            ),
+          ),
+          content: Text(
+            "Do you want to delete the coordinate for $timestamp?",
+            style: TextStyle(color: Colors.blueGrey[600]),
+          ),
           actions: <Widget>[
-            TextButton(
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.redAccent),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
               child: const Text("Cancel"),
               onPressed: () => Navigator.of(context).pop(),
             ),
-            TextButton(
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.blueGrey[800]!),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
               child: const Text("Delete"),
               onPressed: () async {
                 await DatabaseHelper.instance.deleteCoordinate(timestamp);
                 Navigator.of(context).pop();
-                _loadDbCoordinatesAndUpdate(); // Reload data and update UI
+                _loadDbCoordinatesAndUpdate();
               },
             ),
           ],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
         );
       },
     );
   }
-
   void _showUpdateDialog(String timestamp, String currentLat, String currentLong) {
     TextEditingController latController = TextEditingController(text: currentLat);
     TextEditingController longController = TextEditingController(text: currentLong);
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Update coordinates for $timestamp"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TextField(
-                controller: latController,
-                decoration: const InputDecoration(labelText: "Latitude"),
-              ),
-              TextField(
-                controller: longController,
-                decoration: const InputDecoration(labelText: "Longitude"),
-              ),
-            ],
+          title: Text(
+            "Update Coordinates",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.blueGrey[800],
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: Text(
+                    "Timestamp: $timestamp",
+                    style: TextStyle(color: Colors.blueGrey[600]),
+                  ),
+                ),
+                TextField(
+                  controller: latController,
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.my_location, color: Colors.blueGrey[800]),
+                    labelText: "Latitude",
+                    labelStyle: TextStyle(color: Colors.blueGrey[600]),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blueGrey[300]!),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blueGrey[800]!),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  controller: longController,
+                  decoration: InputDecoration(
+                    icon: Icon(Icons.location_on, color: Colors.blueGrey[800]),
+                    labelText: "Longitude",
+                    labelStyle: TextStyle(color: Colors.blueGrey[600]),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blueGrey[300]!),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blueGrey[800]!),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           actions: <Widget>[
-            TextButton(
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.redAccent),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
               child: const Text("Cancel"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
-            TextButton(
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.blueGrey[800]!),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
               child: const Text("Update"),
               onPressed: () async {
                 Navigator.of(context).pop();
@@ -157,11 +268,38 @@ class _SecondScreenState extends State<SecondScreen> {
                 _loadDbCoordinatesAndUpdate();
               },
             ),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: Colors.blueGrey[800]!),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              child: const Text("Weather Info"),
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WeatherScreen(
+                      latitude: latController.text,
+                      longitude: longController.text,
+                    ),
+                  ),
+                );
+              },
+            ),
           ],
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
         );
       },
     );
   }
+
+// WeatherScreen widget would be implemented elsewhere in your codebase
+
 
   void _loadDbCoordinatesAndUpdate() async {
     List<Map<String, dynamic>> dbCoords = await DatabaseHelper.instance.getCoordinates();
@@ -174,3 +312,4 @@ class _SecondScreenState extends State<SecondScreen> {
     });
   }
 }
+

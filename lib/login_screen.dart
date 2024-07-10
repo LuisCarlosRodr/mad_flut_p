@@ -19,16 +19,15 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
     try {
-      final UserCredential userCredential =
-      await _auth.signInWithEmailAndPassword(
+      final UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
-      // Si llegamos aquí, el login fue exitoso
       final User? user = userCredential.user;
       if (user != null) {
         print('Login successful!');
+        // Navegar a la pantalla principal
       } else {
         print('Login failed: user is null');
       }
@@ -38,11 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (e.code == 'wrong-password') {
         _showErrorDialog('La contraseña ingresada es incorrecta.');
       } else {
-        print('Error al iniciar sesión: ${e.message}');
         _showErrorDialog('Error al iniciar sesión: ${e.message}');
       }
     } catch (e) {
-      print('Error desconocido: $e');
       _showErrorDialog('Error desconocido: $e');
     } finally {
       setState(() {
@@ -56,18 +53,15 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
     try {
-      final UserCredential userCredential =
-      await _auth.createUserWithEmailAndPassword(
+      final UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
 
-      // Si llegamos aquí, el registro fue exitoso
       final User? user = userCredential.user;
       if (user != null) {
         print('Registration successful!');
-        // Aquí puedes realizar acciones adicionales después del registro, como navegar a la página principal
-        // Por ejemplo, Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainScreen()));
+        // Navegar a la pantalla principal
       } else {
         print('Registration failed: user is null');
       }
@@ -77,11 +71,9 @@ class _LoginScreenState extends State<LoginScreen> {
       } else if (e.code == 'email-already-in-use') {
         _showErrorDialog('El correo electrónico ya está en uso.');
       } else {
-        print('Error al registrar usuario: ${e.message}');
         _showErrorDialog('Error al registrar usuario: ${e.message}');
       }
     } catch (e) {
-      print('Error desconocido: $e');
       _showErrorDialog('Error desconocido: $e');
     } finally {
       setState(() {
@@ -94,11 +86,11 @@ class _LoginScreenState extends State<LoginScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Error'),
+        title: const Text('Error'),
         content: Text(message),
         actions: <Widget>[
           TextButton(
-            child: Text('OK'),
+            child: const Text('OK'),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -111,37 +103,76 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Iniciar sesión")),
-      body: _isLoading
-          ? Center(
-        child: CircularProgressIndicator(),
-      )
-          : Column(
-        children: <Widget>[
-          TextField(
-            controller: emailController,
-            decoration: const InputDecoration(labelText: 'Email'),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blue.shade200, Colors.blueGrey.shade900],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
-          TextField(
-            controller: passwordController,
-            decoration: const InputDecoration(labelText: 'Password'),
-            obscureText: true,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: _signInWithEmailAndPassword,
-                child: const Text('Login'),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+            child: Card(
+              elevation: 8.0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const Text(
+                      'GPSNow',
+                      style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold, color: Colors.blueGrey),
+                    ),
+                    const SizedBox(height: 16.0),
+                    _buildTextField(emailController, 'Email', Icons.email),
+                    const SizedBox(height: 16.0),
+                    _buildTextField(passwordController, 'Password', Icons.lock, obscureText: true),
+                    const SizedBox(height: 24.0),
+                    _isLoading
+                        ? const CircularProgressIndicator()
+                        : Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: _signInWithEmailAndPassword,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0), backgroundColor: Colors.blueGrey,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+                          ),
+                          child: const Text('LOG IN',
+                          style: TextStyle(color: Colors.white),),
+                        ),
+                        const SizedBox(height: 16.0),
+                        TextButton(
+                          onPressed: _registerWithEmailAndPassword,
+                          child: const Text(
+                            'SIGN UP',
+                            style: TextStyle(color: Colors.blueGrey),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              ElevatedButton(
-                onPressed: _registerWithEmailAndPassword,
-                child: const Text('Register'),
-              ),
-            ],
+            ),
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String labelText, IconData icon, {bool obscureText = false}) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: labelText,
+        prefixIcon: Icon(icon, color: Colors.blueGrey),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
+      ),
+      obscureText: obscureText,
     );
   }
 }

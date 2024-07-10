@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-// Asegúrate de importar tu helper de base de datos
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -25,7 +24,6 @@ class _MapScreenState extends State<MapScreen> {
   // Coordenadas de sitios para comer en Madrid
   final List<Map<String, dynamic>> exampleCoordinates = [
     // Bares
-
     {'latitude': 40.414497, 'longitude': -3.700367, 'name': 'Salmon Guru', 'type': 'bar'},
     {'latitude': 40.416706, 'longitude': -3.701846, 'name': 'Cervecería La Sureña', 'type': 'bar'},
     {'latitude': 40.426483, 'longitude': -3.702175, 'name': 'La Vía Láctea', 'type': 'bar'},
@@ -43,7 +41,6 @@ class _MapScreenState extends State<MapScreen> {
     {'latitude': 40.448167, 'longitude': -3.693824, 'name': 'Katz Madrid', 'type': 'bar'},
     {'latitude': 40.444490, 'longitude': -3.670436, 'name': 'La Vía Láctea', 'type': 'bar'},
     {'latitude': 40.454272, 'longitude': -3.688442, 'name': 'The Irish Rover', 'type': 'bar'},
-
     // Cafés
     {'latitude': 40.414371, 'longitude': -3.702550, 'name': 'Café del Art', 'type': 'cafe'},
     {'latitude': 40.426352, 'longitude': -3.702153, 'name': 'Toma Café', 'type': 'cafe'},
@@ -63,7 +60,6 @@ class _MapScreenState extends State<MapScreen> {
     {'latitude': 40.429187, 'longitude': -3.691725, 'name': 'Boconó', 'type': 'cafe'},
     {'latitude': 40.438709, 'longitude': -3.670764, 'name': 'Miga Bakery', 'type': 'cafe'},
     // Restaurantes
-
     {'latitude': 40.415325, 'longitude': -3.708683, 'name': 'Sobrino de Botín', 'type': 'restaurant'},
     {'latitude': 40.429209, 'longitude': -3.688675, 'name': 'Ramon Freixa', 'type': 'restaurant'},
     {'latitude': 40.426071, 'longitude': -3.683601, 'name': 'Punto MX', 'type': 'restaurant'},
@@ -165,11 +161,27 @@ class _MapScreenState extends State<MapScreen> {
 
   // Mostrar detalles del lugar
   void _showPlaceDetails(String name, String type) {
+    String typeText;
+    switch (type) {
+      case 'restaurant':
+        typeText = 'Restaurante';
+        break;
+      case 'cafe':
+        typeText = 'Café';
+        break;
+      case 'bar':
+        typeText = 'Bar';
+        break;
+      default:
+        typeText = 'Lugar';
+    }
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(name),
+          content: Text('Se trata de un: $typeText'),
           actions: <Widget>[
             TextButton(
               child: const Text("Cerrar"),

@@ -8,7 +8,6 @@ import 'package:logger/logger.dart';
 import 'settings_screen.dart';
 import '/db/database_helper.dart';
 
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -23,7 +22,6 @@ class _SplashScreenState extends State<SplashScreen> {
   StreamSubscription<Position>? _positionStreamSubscription;
   DatabaseHelper db = DatabaseHelper.instance;
 
-
   @override
   void initState() {
     super.initState();
@@ -34,11 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final prefs = await SharedPreferences.getInstance();
     String? uid = prefs.getString('uid');
     String? token = prefs.getString('token');
-    if (uid == null || token == null) {
-      _showInputDialog();
-    } else {
-      logger.d("UID: $uid, Token: $token");
-    }
+    logger.d("UID: $uid, Token: $token");
   }
 
   Future<void> _showInputDialog() async {
@@ -81,8 +75,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text("Flutter App"),
+        title: const Text("GPS Now"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         actions: <Widget>[
           IconButton(
             icon: const Icon(Icons.settings),
@@ -95,24 +92,67 @@ class _SplashScreenState extends State<SplashScreen> {
           ),
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Welcome to the Home Screen!'),
-            Switch(
-              value: _positionStreamSubscription != null,
-              onChanged: (value) {
-                setState(() {
-                  if (value) {
-                    startTracking();
-                  } else {
-                    stopTracking();
-                  }
-                });
-              },
-            ),
-          ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFB2DFDB), Color(0xFF00796B)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Welcome to GPS Now!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Card(
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                elevation: 5,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      SwitchListTile(
+                        title: const Text(
+                          'Location Tracking',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: const Text(
+                          'Enable to start tracking your location',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        value: _positionStreamSubscription != null,
+                        onChanged: (value) {
+                          setState(() {
+                            if (value) {
+                              startTracking();
+                            } else {
+                              stopTracking();
+                            }
+                          });
+                        },
+                        secondary: Icon(
+                          _positionStreamSubscription != null ? Icons.location_on : Icons.location_off,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

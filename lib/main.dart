@@ -33,13 +33,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter APP',
-      home: const AuthWrapper(),
+      title: 'GPS NOW',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
         useMaterial3: true,
         primaryColor: Colors.blueGrey,
       ),
+      home: const AuthWrapper(),
     );
   }
 }
@@ -92,13 +92,22 @@ class _MainScreenState extends State<MainScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blueGrey[900],
         title: const Text(
-          'Flutter App',
+          'GPS Now',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              // Acción para el botón de configuración
+              Fluttertoast.showToast(msg: "Configuration");
+            },
+          ),
+        ],
       ),
       body: Row(
         children: <Widget>[
@@ -136,8 +145,9 @@ class _MainScreenState extends State<MainScreen> {
           ),
           const VerticalDivider(thickness: 1, width: 1),
           Expanded(
-            child: Center(
-              child: _screens.elementAt(_selectedIndex),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 300),
+              child: _screens[_selectedIndex],
             ),
           ),
         ],
