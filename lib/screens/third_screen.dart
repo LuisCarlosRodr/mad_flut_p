@@ -28,28 +28,40 @@ class _ThirdScreenState extends State<ThirdScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Feedback'),
+        backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            Text(
+              'We value your feedback!',
+              style: Theme.of(context).textTheme.titleLarge,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16.0),
             TextFormField(
               controller: _commentController,
               decoration: InputDecoration(
                 labelText: 'Comment',
+                labelStyle: TextStyle(color: Theme.of(context).primaryColor),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Theme.of(context).primaryColor),
                 ),
               ),
               maxLines: 3,
             ),
             const SizedBox(height: 16.0),
-            const Text(
-              'Mood Rating:',
+            Text(
+              'Rating:',
               style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
               ),
             ),
             const SizedBox(height: 8.0),
@@ -77,6 +89,7 @@ class _ThirdScreenState extends State<ThirdScreen> {
             ElevatedButton(
               onPressed: () => _submitFeedback(context, user),
               style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).secondaryHeaderColor,
                 padding: const EdgeInsets.symmetric(vertical: 12.0),
                 textStyle: const TextStyle(fontSize: 16.0),
                 shape: RoundedRectangleBorder(
@@ -144,40 +157,44 @@ class _ThirdScreenState extends State<ThirdScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("Update Feedback"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TextField(
-                controller: commentController,
-                decoration: const InputDecoration(
-                  labelText: "Comment",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16.0),
-              const Text('Mood Rating:'),
-              const SizedBox(height: 8.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  for (int i = 1; i <= 5; i++)
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          rating = i;
-                        });
-                      },
-                      child: Text(
-                        _getMoodEmoji(i),
-                        style: TextStyle(
-                          fontSize: 32.0,
-                          color: rating == i ? Colors.amber : Colors.grey,
-                        ),
-                      ),
+                  TextField(
+                    controller: commentController,
+                    decoration: const InputDecoration(
+                      labelText: "Comment",
+                      border: OutlineInputBorder(),
                     ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  const Text('Mood Rating:'),
+                  const SizedBox(height: 8.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      for (int i = 1; i <= 5; i++)
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              rating = i;
+                            });
+                          },
+                          child: Text(
+                            _getMoodEmoji(i),
+                            style: TextStyle(
+                              fontSize: 32.0,
+                              color: rating == i ? Colors.amber : Colors.grey,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
                 ],
-              ),
-            ],
+              );
+            },
           ),
           actions: <Widget>[
             TextButton(
@@ -301,20 +318,22 @@ class _ThirdScreenState extends State<ThirdScreen> {
     });
   }
 
-  String _getMoodEmoji(int moodRating) {
+
+
+String _getMoodEmoji(int moodRating) {
     switch (moodRating) {
       case 1:
-        return '😢';
+        return '1️⃣';  // Calificación 1
       case 2:
-        return '😞';
+        return '2️⃣';  // Calificación 2
       case 3:
-        return '😐';
+        return '3️⃣';  // Calificación 3
       case 4:
-        return '🙂';
+        return '4️⃣';  // Calificación 4
       case 5:
-        return '😄';
+        return '5️⃣';  // Calificación 5
       default:
-        return '';
+        return '';    // Valor por defecto
     }
   }
 }

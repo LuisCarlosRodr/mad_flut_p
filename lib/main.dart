@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 import 'screens/splash_screen.dart';
 import 'screens/second_screen.dart';
@@ -10,13 +9,11 @@ import 'screens/third_screen.dart';
 import 'screens/map_screen.dart';
 import 'login_screen.dart';
 import 'weather_model.dart';
-import 'firebase_options.dart'; // Asegúrate de importar las opciones de Firebase
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(
     MultiProvider(
       providers: [
@@ -28,7 +25,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +42,7 @@ class MyApp extends StatelessWidget {
 }
 
 class AuthWrapper extends StatelessWidget {
-  const AuthWrapper({super.key});
+  const AuthWrapper({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -54,18 +51,19 @@ class AuthWrapper extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active) {
           if (snapshot.hasData) {
-            return const MainScreen(); // Usuario está logueado
+            return const MainScreen();
+          } else {
+            return const LoginScreen();
           }
-          return const LoginScreen(); // Usuario no está logueado
         }
-        return const Center(child: CircularProgressIndicator()); // Esperando conexión
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
       },
     );
   }
 }
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  const MainScreen({Key? key}) : super(key: key);
 
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -73,11 +71,11 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
-  final List<Widget> _screens = [
-    const SplashScreen(),
-    const SecondScreen(),
-    const ThirdScreen(),
-    const MapScreen(),
+  final List<Widget> _screens = const [
+    SplashScreen(),
+    SecondScreen(),
+    ThirdScreen(),
+    MapScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -99,15 +97,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
         centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              // Acción para el botón de configuración
-              Fluttertoast.showToast(msg: "Configuration");
-            },
-          ),
-        ],
+        actions: const [], // Dejado vacío para futuras acciones
       ),
       body: Row(
         children: <Widget>[
@@ -116,28 +106,28 @@ class _MainScreenState extends State<MainScreen> {
             selectedIndex: _selectedIndex,
             onDestinationSelected: _onItemTapped,
             labelType: NavigationRailLabelType.all,
-            selectedIconTheme: IconThemeData(color: Colors.blueGrey[900]),
-            selectedLabelTextStyle: TextStyle(color: Colors.blueGrey[900]),
-            unselectedIconTheme: IconThemeData(color: Colors.blueGrey[600]),
-            unselectedLabelTextStyle: TextStyle(color: Colors.blueGrey[600]),
+            selectedIconTheme: const IconThemeData(color: Colors.blueGrey),
+            selectedLabelTextStyle: const TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
+            unselectedIconTheme: const IconThemeData(color: Colors.blueGrey),
+            unselectedLabelTextStyle: const TextStyle(color: Colors.blueGrey),
             destinations: const <NavigationRailDestination>[
               NavigationRailDestination(
-                icon: Icon(Icons.home),
-                selectedIcon: Icon(Icons.home_filled),
+                icon: Icon(Icons.home_outlined),
+                selectedIcon: Icon(Icons.home),
                 label: Text('Home'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.search),
-                selectedIcon: Icon(Icons.search_rounded),
-                label: Text('Search'),
+                icon: Icon(Icons.location_on_outlined),
+                selectedIcon: Icon(Icons.location_on),
+                label: Text('Coordinates'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.notifications),
-                selectedIcon: Icon(Icons.notifications_active),
-                label: Text('Notifications'),
+                icon: Icon(Icons.star_outline),
+                selectedIcon: Icon(Icons.star),
+                label: Text('Feedback'),
               ),
               NavigationRailDestination(
-                icon: Icon(Icons.map),
+                icon: Icon(Icons.map_outlined),
                 selectedIcon: Icon(Icons.map),
                 label: Text('Map'),
               ),

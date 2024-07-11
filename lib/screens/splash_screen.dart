@@ -9,7 +9,7 @@ import 'settings_screen.dart';
 import '/db/database_helper.dart';
 
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
@@ -21,11 +21,13 @@ class _SplashScreenState extends State<SplashScreen> {
   final _tokenController = TextEditingController();
   StreamSubscription<Position>? _positionStreamSubscription;
   DatabaseHelper db = DatabaseHelper.instance;
+  bool _isTrackingEnabled = false;
 
   @override
   void initState() {
     super.initState();
     _loadPrefs();
+    _loadTrackingState();
   }
 
   Future<void> _loadPrefs() async {
@@ -33,6 +35,17 @@ class _SplashScreenState extends State<SplashScreen> {
     String? uid = prefs.getString('uid');
     String? token = prefs.getString('token');
     logger.d("UID: $uid, Token: $token");
+  }
+
+  Future<void> _loadTrackingState() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _isTrackingEnabled = prefs.getBool('isTrackingEnabled') ?? false;
+    });
+
+    if (_isTrackingEnabled) {
+      startTracking();
+    }
   }
 
   Future<void> _showInputDialog() async {
@@ -132,18 +145,20 @@ class _SplashScreenState extends State<SplashScreen> {
                           'Enable to start tracking your location',
                           style: TextStyle(fontSize: 14),
                         ),
-                        value: _positionStreamSubscription != null,
+                        value: _isTrackingEnabled,
                         onChanged: (value) {
                           setState(() {
-                            if (value) {
-                              startTracking();
-                            } else {
-                              stopTracking();
-                            }
+                            _isTrackingEnabled = value;
                           });
+                          _saveTrackingState(value);
+                          if (value) {
+                            startTracking();
+                          } else {
+                            stopTracking();
+                          }
                         },
                         secondary: Icon(
-                          _positionStreamSubscription != null ? Icons.location_on : Icons.location_off,
+                          _isTrackingEnabled ? Icons.location_on : Icons.location_off,
                           color: Theme.of(context).primaryColor,
                         ),
                       ),
@@ -166,29 +181,28 @@ class _SplashScreenState extends State<SplashScreen> {
 
     final serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
+      logger.e('Location services are disabled.');
+      return;
     }
 
     var permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
+        logger.e('Location permissions are denied');
+        return;
       }
     }
 
     if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied');
+      logger.e('Location permissions are permanently denied');
+      return;
     }
 
     _positionStreamSubscription = Geolocator.getPositionStream(locationSettings: locationSettings).listen(
           (Position position) {
+        logger.i('New position: ${position.latitude}, ${position.longitude}');
         writePositionToFile(position);
-      },
-    );
-    // insert into sqflite db
-    _positionStreamSubscription = Geolocator.getPositionStream(locationSettings: locationSettings).listen(
-          (Position position) {
         db.insertCoordinate(position);
       },
     );
@@ -206,6 +220,11 @@ class _SplashScreenState extends State<SplashScreen> {
     final file = File('${directory.path}/gps_coordinates.csv');
     String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
     await file.writeAsString('$timestamp;${position.latitude};${position.longitude}\n', mode: FileMode.append);
+  }
+
+  Future<void> _saveTrackingState(bool isTracking) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isTrackingEnabled', isTracking);
   }
 
   @override
