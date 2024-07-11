@@ -13,7 +13,7 @@ Mad_Flut_P is a Flutter application designed to help users explore and discover 
 ## Screenshots and navigation
 Screens:(https://drive.google.com/drive/folders/1UZgx3vtDvCKt1oP7GFsKWGLGkxJHlsjL?usp=sharing)
 ## Demo Video
-Video:(https://we.tl/t-IPX8OTlwvp)
+Video:(https://we.tl/t-IPX8OTlwvp)](https://www.youtube.com/watch?v=oJldECyj5a8&ab_channel=LuifiDev)
 
 ## Features
 ### Functional Features
