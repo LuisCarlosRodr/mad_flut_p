@@ -1,21 +1,27 @@
-# mad_flut_p
+# Mad_Flut_P
 
-A new Flutter project.
+## Workspace 
+Github:  
+- Repository: (https://github.com/LuisCarlosRodr/mad_flut_p)  
+- Releases: (https://github.com/LuisCarlosRodr/mad_flut_p/releases)  
+
+Workspace:  .  
 
 ## Description
+Mad_Flut_P is a Flutter application designed to help users explore and discover nearby restaurants, bars, and cafes on a map. Users can view ratings for each location, provide feedback, track their saved locations in real-time, and check the weather at their current location. It enhances user experience by combining location-based services with real-time updates and personalized preferences.
 
-The Flutter app is a location tracking tool that allows users to record and share their real-time geographic coordinates. With an intuitive interface and built-in security features, users can view their current location, track routes, and much more. Additionally, the app offers features such as user authentication, profile management, and customizable settings for a complete and secure user experience.
+## Screenshots and navigation
+Include screenshots of the app in action. You can upload the images to GitHub and then reference them here using Markdown or HTML syntax:
+
+
+## Demo Video
+Video demonstrating how the app works (Max 1 video of 1 minute), upload it to a platform like YouTube or Vimeo (it might also work with Stream) and link it here:  
+<a href="https://vimeo.com/410664338?share=copy">
+<img src="img/thumb.png" alt="Mad_Flut_P app" width="100" /> 
+</a>
 
 ## Features
-- Available for Android
-- Available for iOS
-- Real-time database
-- Authentication
-- Firebase UI
-- External web service
-
 ### Functional Features
-
 - Search for nearby food sites and points of interest.
 - Filter routes.
 - Interactive map with zoom and pan functionality.
@@ -23,7 +29,6 @@ The Flutter app is a location tracking tool that allows users to record and shar
 - Save favorite locations and routes for future use.
 
 ### Technical Features
-
 - Persistence of user preferences using SharedPreferences.
 - Data storage and retrieval using Room database.
 - Utilization of RESTful APIs for accessing external data sources, such as OpenWeatherMap API for weather information.
@@ -32,40 +37,33 @@ The Flutter app is a location tracking tool that allows users to record and shar
 - Sensor integration for capturing GPS coordinates and orientation data.
 
 ## How to Use
+### Download and Install the App:
+1. Visit the Google Play Store or Apple Store on your mobile device.
+2. Search for "Mad_Flut_P" and locate the app in the search results.
+3. Tap on the app icon to open its store page.
+4. Press the "Install" or "Get" button to download and install the app on your device.
 
-To get started with the Flutter app as a user, follow these simple instructions:
+### Launch the App:
+1. Once the installation is complete, locate the Mad_Flut_P app icon on your device's home screen or app drawer.
+2. Tap on the app icon to launch Mad_Flut_P.
 
-1. **Download and Install the App:**
-   - Visit the Google Play Store or Apple Store on your mobile device.
-   - Search for "Flutter App" and locate the app in the search results.
-   - Tap on the app icon to open its store page.
-   - Press the "Install" or "Get" button to download and install the app on your device.
+### Explore App Features:
+- Upon launching the app, you will be greeted with the main interface, which may include a map view.
+- Explore the various features of the app, such as searching for nearby landmarks, filtering routes by transportation mode, and accessing real-time traffic information.
+- Navigate through different sections of the app using the navigation menu or toolbar provided.
 
-2. **Launch the App:**
-   - Once the installation is complete, locate the Flutter app icon on your device's home screen or app drawer.
-   - Tap on the app icon to launch Flutter.
+### Customize Preferences (Optional):
+- If desired, navigate to the app's settings or preferences section to customize your experience.
+- Adjust settings related to map display and other preferences.
 
-3. **Explore App Features:**
-   - Upon launching the app, you will be greeted with the main interface, which may include a map view.
-   - Explore the various features of the app, such as searching for nearby landmarks, filtering routes by transportation mode, and accessing real-time traffic information.
-   - Navigate through different sections of the app using the navigation menu or toolbar provided.
-
-4. **Customize Preferences (Optional):**
-   - If desired, navigate to the app's settings or preferences section to customize your experience.
-   - You may be able to adjust settings related to map display.
-
-5. **Enjoy Using Flutter:**
-   - Start using Flutter to discover nearby points of interest, plan routes, and navigate your surroundings with ease.
-   - Feel free to explore all the features and functionalities offered by the app to enhance your navigation and exploration experience.
-
-6. **Provide Feedback:**
-   - If you encounter any issues, have suggestions for improvement, or want to share your feedback, navigate to the app's settings or help section to find information on how to contact the developer or provide feedback.
-
-By following these steps, you can easily get started with using the Flutter app and make the most out of its features for your navigation needs.
+### Enjoy Using Mad_Flut_P:
+- Start using Mad_Flut_P to discover nearby points of interest, plan routes, and navigate your surroundings with ease.
+- Feel free to explore all the features and functionalities offered by the app to enhance your navigation and exploration experience.
 
 ## Participants
 List of MAD developers:
 - Name SecondName Member1 (luiscarlos.rodriguez.escudero@alumnos.upm.es)
-- Name SecondName Member1 (javierdiez.tejeda@alumnos.upm.es) 
+- Name SecondName Member1 (javierdiez.tejeda@alumnos.upm.es)
 
+Workload distribution between members: 50%/50%
 
