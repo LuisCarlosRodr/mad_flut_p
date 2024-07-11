@@ -5,20 +5,16 @@ Github:
 - Repository: (https://github.com/LuisCarlosRodr/mad_flut_p)  
 - Releases: (https://github.com/LuisCarlosRodr/mad_flut_p/releases)  
 
-Workspace:  .  
+Workspace: (https://upm365.sharepoint.com/sites/UPMMobileApp/SitePages/Tracking.aspx)
 
 ## Description
 Mad_Flut_P is a Flutter application designed to help users explore and discover nearby restaurants, bars, and cafes on a map. Users can view ratings for each location, provide feedback, track their saved locations in real-time, and check the weather at their current location. It enhances user experience by combining location-based services with real-time updates and personalized preferences.
 
 ## Screenshots and navigation
-Include screenshots of the app in action. You can upload the images to GitHub and then reference them here using Markdown or HTML syntax:
-
-
+Screens:(https://drive.google.com/drive/folders/1UZgx3vtDvCKt1oP7GFsKWGLGkxJHlsjL?usp=sharing)
 ## Demo Video
 Video demonstrating how the app works (Max 1 video of 1 minute), upload it to a platform like YouTube or Vimeo (it might also work with Stream) and link it here:  
-<a href="https://vimeo.com/410664338?share=copy">
-<img src="img/thumb.png" alt="Mad_Flut_P app" width="100" /> 
-</a>
+(https://we.tl/t-IPX8OTlwvp)
 
 ## Features
 ### Functional Features
