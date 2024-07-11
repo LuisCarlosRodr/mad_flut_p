@@ -12,6 +12,32 @@ GPSNow is a Flutter application designed to help users explore and discover near
 
 ## Screenshots and navigation
 Screens:(https://drive.google.com/drive/folders/1UZgx3vtDvCKt1oP7GFsKWGLGkxJHlsjL?usp=sharing)
+
+![captura1](https://github.com/LuisCarlosRodr/mad_flut_p/raw/master/Images%20App%20Flutter/Captura0.png)
+
+![captura2](https://github.com/LuisCarlosRodr/mad_flut_p/raw/master/Images%20App%20Flutter/Captura1.png)
+
+![captura3](https://github.com/LuisCarlosRodr/mad_flut_p/raw/master/Images%20App%20Flutter/Captura2.png)
+
+![captura4](https://github.com/LuisCarlosRodr/mad_flut_p/raw/master/Images%20App%20Flutter/Captura3.png)
+
+![captura5](https://github.com/LuisCarlosRodr/mad_flut_p/raw/master/Images%20App%20Flutter/Captura4.png)
+
+![captura6](https://github.com/LuisCarlosRodr/mad_flut_p/raw/master/Images%20App%20Flutter/Captura5.png)
+
+![captura7](https://github.com/LuisCarlosRodr/mad_flut_p/raw/master/Images%20App%20Flutter/Captura6.png)
+
+![captura8](https://github.com/LuisCarlosRodr/mad_flut_p/raw/master/Images%20App%20Flutter/Captura7.png)
+
+![captura9](https://github.com/LuisCarlosRodr/mad_flut_p/raw/master/Images%20App%20Flutter/Captura8.png)
+
+![captura10](https://github.com/LuisCarlosRodr/mad_flut_p/raw/master/Images%20App%20Flutter/Captura9.png)
+
+![captura11](https://github.com/LuisCarlosRodr/mad_flut_p/raw/master/Images%20App%20Flutter/Captura10.png)
+
+![captura12](https://github.com/LuisCarlosRodr/mad_flut_p/raw/master/Images%20App%20Flutter/Captura11.png)
+
+
 ## Demo Video
 Video:(https://www.youtube.com/watch?v=oJldECyj5a8&ab_channel=LuifiDev)
 
